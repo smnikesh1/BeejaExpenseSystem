@@ -1,0 +1,8 @@
+backend/.env
+backend/venv/
+web/node_modules/
+mobile/node_modules/
+__pycache__/
+*.pyc
+.expo/
+.env
