@@ -1,4 +1,3 @@
-CREATE DATABASE beeja_expense_db;
 USE beeja_expense_db;
 
 

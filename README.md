@@ -11,6 +11,7 @@ The system allows employees to create and submit expense claims, managers to rev
 * **Mobile:** React Native, Expo
 * **Database:** MySQL 8.x
 * **API Testing:** Swagger / OpenAPI
+* **Containerization:** Docker, Docker Compose
 * **Version Control:** Git and GitHub
 
 ## Project Structure
@@ -18,10 +19,16 @@ The system allows employees to create and submit expense claims, managers to rev
 ```text
 BeejaExpenseSystem/
 ├── backend/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── ...
 ├── web/
+│   ├── Dockerfile
+│   └── ...
 ├── mobile/
 ├── db/
 │   └── schema.sql
+├── docker-compose.yml
 ├── README.md
 └── .gitignore
 ```
@@ -82,7 +89,9 @@ db/schema.sql
 
 ## Prerequisites
 
-Install the following before running the project:
+### For Local Development
+
+Install:
 
 * Python 3.x
 * Node.js and npm
@@ -90,7 +99,13 @@ Install the following before running the project:
 * Git
 * Expo / React Native development environment
 
-## Database Setup
+### For Docker
+
+Install:
+
+* Docker Desktop
+
+## Database Setup — Local
 
 1. Start MySQL.
 
@@ -104,9 +119,9 @@ db/schema.sql
 
 This creates the database, tables, and seed data.
 
-## Backend Setup
+## Backend Setup — Local
 
-Open PowerShell and run:
+Open PowerShell:
 
 ```powershell
 cd "BeejaExpenseSystem\backend"
@@ -155,7 +170,7 @@ Swagger API documentation:
 http://127.0.0.1:8000/docs
 ```
 
-## Web Setup
+## Web Setup — Local
 
 Open another terminal:
 
@@ -183,7 +198,7 @@ http://localhost:5173
 
 The web application provides Manager and Finance Admin functionality.
 
-## Mobile Setup
+## Mobile Setup — Local
 
 Open another terminal:
 
@@ -210,6 +225,76 @@ npx expo start --web
 ```
 
 The mobile application connects to the FastAPI backend running locally.
+
+## Docker Setup
+
+Docker Compose is provided to run the MySQL database, FastAPI backend, and React web application together.
+
+### Start the complete system
+
+From the project root:
+
+```powershell
+docker compose up -d --build
+```
+
+### Check running services
+
+```powershell
+docker compose ps
+```
+
+Expected services:
+
+```text
+mysql
+backend
+web
+```
+
+### Services and Ports
+
+| Service         | Port | Purpose         |
+| --------------- | ---: | --------------- |
+| MySQL           | 3307 | Database        |
+| FastAPI Backend | 8000 | REST API        |
+| React Web       | 5173 | Web application |
+
+### Open the applications
+
+Web application:
+
+```text
+http://localhost:5173
+```
+
+FastAPI backend:
+
+```text
+http://localhost:8000
+```
+
+Swagger API documentation:
+
+```text
+http://localhost:8000/docs
+```
+
+### Stop Docker services
+
+```powershell
+docker compose down
+```
+
+### Stop services and remove database volume
+
+```powershell
+docker compose down -v
+```
+
+> Note: `docker compose down -v` removes the MySQL Docker volume and resets the Docker database data.
+
+The mobile application is run separately using Expo.
 
 ## Test Credentials
 
@@ -322,9 +407,9 @@ The application includes:
 
 * Authentication is simulated for the technical assessment and is not a production-grade authentication system.
 * Receipt filename/string information is stored; full cloud/object-storage upload is not implemented.
-* The application is designed to run locally.
-* Docker Compose deployment is not included.
+* The application is designed primarily for local/on-premise demonstration.
 * Production deployment, HTTPS, and production authentication are outside the scope of this assessment.
+* The mobile application is not containerized and is run separately using Expo.
 
 ## Testing
 
@@ -339,6 +424,14 @@ The main end-to-end workflow has been tested:
 7. Employee can see the final `PAID` status.
 
 API endpoints were also tested using the FastAPI Swagger documentation.
+
+The Docker environment was also tested with:
+
+```text
+MySQL       → Running
+FastAPI     → Running
+React Web   → Running
+```
 
 ## AI Tools Usage
 
@@ -361,7 +454,6 @@ Possible future enhancements include:
 * JWT-based production authentication
 * Real receipt file uploads
 * AWS S3/object storage integration
-* Docker Compose deployment
 * CSV export
 * Mobile camera-based receipt capture
 * Role-based authorization middleware

@@ -1,0 +1,40 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: beeja-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: change_this_password
+      MYSQL_DATABASE: beeja_expense_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+
+  backend:
+    build: ./backend
+    container_name: beeja-backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: change_this_password
+      DB_NAME: beeja_expense_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+
+  web:
+    build: ./web
+    container_name: beeja-web
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
